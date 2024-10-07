@@ -21,6 +21,7 @@ app = FastAPI(lifespan=lifespan)
 def read_root():
     return {"message": "Hello, World!"}
 
+# 이거는 그냥 확인용 실제로는 사용 안함
 @app.get("/word2vec/{word}")
 async def get_vector(word: str):
     raw_data = list(get_word_vector(word))
