@@ -1,6 +1,8 @@
 from fastapi import FastAPI
 from word2vec import get_word_vector, load_model
 from contextlib import asynccontextmanager
+from pydantic import BaseModel
+
 
 # lifespan 이벤트 핸들러를 사용하여 애플리케이션 시작 시 작업 실행
 @asynccontextmanager
@@ -29,3 +31,17 @@ async def get_vector(word: str):
         "word": word,
         "vector": data
     }
+
+
+class Word2VecRequest(BaseModel):
+    words: list[str]
+
+@app.post("/word2vec") 
+async def get_vectors(request: Word2VecRequest):
+    words = request.words
+    result = {}
+    for word in words:
+        raw_data = list(get_word_vector(word))
+        data = list(map(float, raw_data))
+        result[word] = data
+    return result
