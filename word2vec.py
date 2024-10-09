@@ -3,7 +3,6 @@ import fasttext.util
 
 # 사전 학습된 한국어 FastText 모델 로드
 model_path = 'cc.ko.300.bin'
-model = fasttext.load_model(model_path)
 
 def load_model():
     global model

@@ -5,8 +5,12 @@ from word2vec import model
 def cosine_similarity(vec1, vec2):
     return np.dot(vec1, vec2) / (np.linalg.norm(vec1) * np.linalg.norm(vec2))
 
-word1 = "사과나무"
-word2 = "사과나무"
+# word1 = "해수욕장"
+# word2 = "바닷가"
+
+word1 = "멀티탭"
+word2 = "충전기"
+
 
 # 두 단어에 대한 벡터
 vector1 = model.get_word_vector(word1)
