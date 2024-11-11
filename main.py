@@ -42,7 +42,17 @@ async def get_vectors(request: Word2VecRequest):
     words = request.words
     result = {}
     for word in words:
-        raw_data = list(get_word_vector(word))
+        raw_data = []
+        if '/' in word:
+            split_data = word.split('/')
+            if split_data[0] == "X":
+                raw_data = [-value for value in get_word_vector(split_data[1])]
+            else :
+                raw_data = list(get_word_vector(split_data[1]))
+        else:
+            # 그냥 하는거
+            raw_data = list(get_word_vector(word))
+
         data = list(map(float, raw_data))
         result[word] = data
     return result
