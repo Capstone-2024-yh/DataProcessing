@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from word2vec import get_word_vector, load_model
 from contextlib import asynccontextmanager
 from pydantic import BaseModel
+import numpy as np
 
 
 # lifespan 이벤트 핸들러를 사용하여 애플리케이션 시작 시 작업 실행
@@ -42,17 +43,21 @@ async def get_vectors(request: Word2VecRequest):
     words = request.words
     result = {}
     for word in words:
-        raw_data = []
+        raw_data: np.ndarray
         if '/' in word:
             split_data = word.split('/')
             if split_data[0] == "X":
-                raw_data = [-value for value in get_word_vector(split_data[1])]
+                # X로 시작하면 반대벡터 연산 넣은거
+                raw_data = - get_word_vector(split_data[1])
             else :
-                raw_data = list(get_word_vector(split_data[1]))
+                raw_data = get_word_vector(split_data[1])
         else:
             # 그냥 하는거
-            raw_data = list(get_word_vector(word))
+            raw_data = get_word_vector(word)
 
-        data = list(map(float, raw_data))
-        result[word] = data
+        # 노멀라이제이션을 위한 l2 norm 구하기
+        l2_norm = np.linalg.norm(raw_data)
+        normalized_data = raw_data / l2_norm
+
+        result[word] = normalized_data.tolist()
     return result
